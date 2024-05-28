@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+
+<h1>Search Results for "{{ query }}"</h1>
+
+{% if query|length > 2 %}
+{% if albums or songs %}
+{% if albums %}
+<h2>Albums</h2>
+<div class="index-container">
+    {% for album in albums %}
+    <div class="songs-container margin-albums" href="#">
+        <a href="{% url 'album_detail' album.id %}">
+            <img class="album-cover" src="{{ album.album_logo.url }}" alt="song">
+        </a>
+        <div class="song-details">
+            <div class="album-name"><b class="no-underline">{{ album.album_title }}</b></div>
+            <div class="album-artist no-underline">{{ album.user }} </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+
+{% if songs %}
+<div class="songs-bottom-details">
+    <h2 class="fields">Songs</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Artist</th>
+                <th>Album</th>
+                <th>Play</th>
+                <th>Favorite</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for song in songs %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ song.song_title }}</td>
+                <td>{{ song.album.user.username }}</td>
+                <td>
+                    <a href="{% url 'album_detail' song.album.id %}">
+                        <img src="{{ song.album.album_logo.url }}" alt="Album Logo" class="album-logo-img">
+                    </a>
+                </td>
+                <td> <button class="play-btn" data-audio-url="{{ song.audio_file.url }}"><i
+                            class="fa-solid fa-play"></i> <span class="play-text">Play</span>
+                    </button></td>
+                <td>
+                    <button class="favorite-btn" onclick="toggleFavorite(this, '{{ song.id }}')">
+                        <i class="fa-solid fa-star {% if song.is_favorite %}checked{% else %}unchecked{% endif %}"></i>
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% else %}
+<div class="no-song-message">No Results were found.</div>
+{% endif %}
+{% else %}
+<div class="no-song-message">No Results were found.</div>
+{% endif %}
+
+{% include 'audioplayer.html'%}
+
+{% endblock %}

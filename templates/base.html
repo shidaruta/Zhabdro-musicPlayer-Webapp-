@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Zhabdro{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles.css' %}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Satisfy&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="{% static '/images/icon.png' %}">
+
+    <style>
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-image: url("{% static 'images/background.png' %}");
+        }
+
+        .logo {
+            width: 19px;
+        }
+
+        #logo:hover .logo {
+            background-color: #cccccc;
+            border-radius: 50%;
+        }
+
+        /* for table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #d5d5d5;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #cccccc;
+        }
+
+        /* Style for the custom warning dialog */
+        .warning-dialog {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .warning-dialog button {
+            margin: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="left-navbar">
+            <a id="logo" class="hoverr" href="{% url 'index' %}"><img class="logo" src="{% static 'images/icon.png'%}"
+                    alt="lgog">habdro </a>
+            <a class="hide-navbar hoverr" href="{% url 'albums' %}"> <i class="fa-solid fa-compact-disc"></i> Albums</a>
+            <a class="hide-navbar hoverr" href="{% url 'favorite' %}"><i class="fa-solid fa-star"></i> Favourites</a>
+            <form class="search-container top-search-container" role="search" method="get" action="{% url 'search' %}">
+                <input class="search-input" type="text" name="q" placeholder="       What do you want to play?"
+                    value="{{ request.GET.q }}">
+                <button type="submit" class="search-button">Search</button>
+            </form>
+        </div>
+
+        <div class="right-navbar">
+            <a class="hide-navbar hoverr" href="{% url 'profile' %}"> <i class="fa-solid fa-user"></i>&nbsp; Profile</a>
+            <!-- Changed this 'id' to avoid conflict with another logout link in the dropdown -->
+            <a id="logout-link" class="hide-navbar hoverr" href="{% url 'logout' %}">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </a>
+            <div class="dropdown">
+                <i id="dropdownToggle" class="fa-solid fa-bars hoverr"></i>
+                <div class="dropdown-content" id="dropdownContent">
+                    <div style="padding: 5px;">
+                        <form class="search-container" role="search" method="get" action="{% url 'search' %}">
+                            <input class="dropdown-search-input" type="text" name="q"
+                                placeholder="     What do you want to play?" value="{{ request.GET.q }}">
+                            <button type="submit" class="dropdown-search-button">Search</button>
+                        </form>
+                    </div>
+                    <a class="hide-navbar hoverr" href="{% url 'albums' %}"> <i class="fa-solid fa-compact-disc"></i>
+                        Albums</a>
+                    <a class="hide-navbar hoverr" href="{% url 'favorite' %}"><i class="fa-solid fa-star"></i>
+                        Favourites</a>
+                    <a class="hoverr" href="{% url 'profile' %}"><i class="fa-solid fa-user"></i>&nbsp; Profile</a>
+                    <!-- Added 'id' for logout link in dropdown -->
+                    <a id="dropdown-logout" class="hoverr" href="{% url 'logout' %}">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="content-container">
+        {% block body %}
+        {% endblock %}
+    </div>
+
+
+
+    <!-- logout warning -->
+    <!-- Added this custom warning dialog -->
+    <div id="custom-warning-dialog" class="warning-dialog" style="display: none;">
+        <p style="	color: brown;">Confirm logout</p>
+        <p class="fields">Are you sure you want to logout?</p>
+        <div class="logout-options">
+            <button class="logout-option-btn" id="cancel-logout">Cancel</button>
+            <button class="logout-option-btn" id="confirm-logout">Yes</button>
+        </div>
+    </div>
+    <script src="{% static 'js/audioplayer.js' %}"></script>
+    <script src="https://kit.fontawesome.com/a396b8d92b.js" crossorigin="anonymous"></script>
+
+</body>
+<script>
+    
+</script>
+
+</html>

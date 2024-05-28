@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+<h1>Albums </h1>
+
+<div class="index-container">
+   {% for album in albums %}
+
+   <div class="songs-container margin-albums" href="#">
+      <a href="{% url 'album_detail' album.id %}">
+         <img class="album-cover" src="{{ album.album_logo.url }}" alt="song">
+      </a>
+      <div class="song-details">
+         <div class="album-name"><b class="no-underline">{{ album.album_title }}</b></div>
+         <div class="album-artist no-underline">{{ album.user }} </div>
+      </div>
+   </div>
+   {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+<h1>Your Favorites</h1>
+<div class="songs-bottom-details">
+    {% if favorited_songs %}
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Artist</th>
+                <th>Album</th>
+                <th>Play</th>
+                <th>Favorite</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for favorite in favorited_songs %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ favorite.song.song_title }}</td>
+                <td>{{ favorite.song.album.user.username }}</td>
+                <td>
+                    {% if favorite.song.album %}
+                    <a href="{% url 'album_detail' favorite.song.album.id %}">
+                        <img src="{{ favorite.song.album.album_logo.url }}" alt="Album Logo" class="album-logo-img">
+                    </a>
+                    {% else %}
+                    No album available
+                    {% endif %}
+                </td>
+                <td>
+                    <button class="play-btn" data-audio-url="{{ favorite.song.audio_file.url }}">
+                        <i class="fa-solid fa-play"></i> Play
+                    </button>
+                </td>
+                <td>
+                    <button class="favorite-btn" data-is-favorite="true"
+                        onclick="toggleFavorite(this, '{{ favorite.song.id }}')">
+                        <i class="fa-solid fa-star checked"></i>
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>You haven't favorited any songs yet. <a href="{% url 'index' %}">Browse songs</a> to find your favorites!</p>
+    {% endif %}
+</div>
+{% include 'audioplayer.html' %}
+{% endblock %}

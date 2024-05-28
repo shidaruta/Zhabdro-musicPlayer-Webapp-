@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+<h1> Your Albums </h1>
+<p class="fields">Click the Album to add songs</p>
+<div class="profile-top">
+    <div class="profile-album-container">
+        {% for album in albums %}
+        {% if album.user == request.user %}
+        <div class="songs-container space">
+            <a href="{% url 'add_song' album.id %}">
+                <img class="album-cover" src="{{ album.album_logo.url }}" alt="song">
+            </a>
+            <div class="song-details">
+                <div class="album-name"><b class="no-underline">{{ album.album_title }}</b></div>
+                <div class="album-artist no-underline">{{ album.user }} </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+        {% if not albums %}
+        <div class="no-albums-message">
+            <p>You have not added any albums yet.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="profile-bot">
+    <h2>Add Album</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="fields">
+            <label for="id_album_title">Album Title:</label>
+            {{ form.album_title }}
+        </div>
+        <div class="fields">
+            <label for="id_album_logo">Album Logo:</label>
+            {{ form.album_logo }}
+        </div>
+        <button type="submit" class="add-album-btn fields" name="submit">Add Album</button>
+    </form>
+
+</div>
+</div>
+
+{% endblock %}

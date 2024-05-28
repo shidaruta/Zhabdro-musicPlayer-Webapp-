@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+<h1>{{ album.album_title }}</h1>
+
+<div class="album-detail-container">
+    <img class="album-cover" src="{{ album.album_logo.url }}" alt="Album Cover">
+    <div class="song-details-container">
+        <div class="album-name"><b class="no-underline">{{ album.album_title }}</b></div>
+        <div class="album-artist no-underline">{{ album.user }}</div>
+    </div>
+
+    <form id="delete-album-form" action="{% url 'delete_album' album.id %}" method="post">
+        {% csrf_token %}
+        <button type="button" id="delete-album-btn" class="album-delete-button" onclick="deleteAlbum('{{ album.id }}')">
+            <i class="fa-solid fa-trash-can"></i> Album
+        </button>
+    </form>
+</div>
+
+
+<button id="view-btn" class="add-album-btn" onclick="showSection('view')">View Songs</button>
+<button id="add-song-btn" class="add-album-btn" onclick="showSection('add-song')">Add Song</button>
+
+<div id="songs-bottom-details" class="songs-bottom-details" style="display: none;">
+    {% if songs %}
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Artist</th>
+                <th>Album</th>
+                <th>Play</th>
+                <th>Favorite</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for song in songs %}
+            <tr id="song-row-{{ song.id }}">
+                <td>{{ forloop.counter }}</td>
+                <td>{{ song.song_title }}</td>
+                <td>{{ song.album.user.username }}</td>
+                <td>
+                    <a href="{% url 'album_detail' song.album.id %}">
+                        <img src="{{ song.album.album_logo.url }}" alt="Album Logo" class="album-logo-img">
+                    </a>
+                </td>
+                <td>
+                    <button class="play-btn" data-audio-url="{{ song.audio_file.url }}">
+                        <i class="fa-solid fa-play"></i> <span class="play-text">Play</span>
+                    </button>
+                </td>
+                <td>
+                    <button class="favorite-btn" onclick="toggleFavorite(this, '{{ song.id }}')">
+                        <i class="fa-solid fa-star {% if song.is_favorite %}checked{% else %}unchecked{% endif %}"></i>
+                    </button>
+                </td>
+                <td>
+                    <button class="album-delete-button" onclick="deleteSong('{{ song.id }}')">
+                        <i class="fa-solid fa-trash-can"></i> Delete
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="no-song-message">Add songs to your Album</div>
+    {% endif %}
+</div>
+
+<div id="add-song-form" class="add-song-form fields" style="display: none;">
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div>
+            <label for="id_song_title">Song Title:</label>
+            {{ forms.song_title }}
+        </div>
+        <div class="fields">
+            <label for="id_audio_file">Audio file:</label>
+            {{ forms.audio_file }}
+            <div style="display: block;" class="errors">
+                {% for message in messages %}
+                {% if message.tags == 'error' %}
+                <p style="color:red" id="messages">{{ message }}</p>
+                {% else %}
+                <p style="color:rgb(11, 158, 11)" id="messages">{{ message }}</p>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <button type="submit" class="add-album-btn fields" name="submit">Add song to Album</button>
+    </form>
+</div>
+
+{% include 'audioplayer.html' %}
+
+<!-- Dialog box for confirming album deletion -->
+<div id="delete-album-dialog" class="warning-dialog" style="display: none;">
+    <p style="color: brown;">Confirm Delete</p>
+    <p class="fields">Are you sure you want to delete this album?</p>
+    <div class="logout-options">
+        <button class="logout-option-btn" id="cancel-album-delete">Cancel</button>
+        <button class="logout-option-btn" id="confirm-album-delete">Yes</button>
+    </div>
+</div>
+
+<!-- Dialog box for confirming song deletion -->
+<div id="delete-song-dialog" class="warning-dialog" style="display: none;">
+    <p style="color: brown;">Confirm Delete</p>
+    <p class="fields">Are you sure you want to delete this song?</p>
+    <div class="logout-options">
+        <button class="logout-option-btn" id="cancel-delete">Cancel</button>
+        <button class="logout-option-btn" id="confirm-delete">Yes</button>
+    </div>
+</div>
+
+{% endblock %}
